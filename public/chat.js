@@ -7,10 +7,26 @@ let username = document.getElementById('username');
 let btn = document.getElementById('send');
 let output = document.getElementById('output');
 let actions = document.getElementById('actions');
+let enter = document.getElementById("username");
 
+function scrollToBottom(){
+  var div = $("#chat-window");
+  div.animate({
+  scrollTop: div[0].scrollHeight},'fast');
+  return false;
+};
 
-let enter = document.getElementById("username")
-    enter.addEventListener("keyup", function(event) {
+message.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.key === "Enter") {
+    socket.emit('chat:message', {
+      message: message.value,
+      username: username.value
+    });
+  }
+});
+
+enter.addEventListener("keyup", function(event) {
         event.preventDefault();
         if (event.key === "Enter") {
             socket.emit('chat:username-entered', username.value);
@@ -33,15 +49,26 @@ socket.on('chat:message', function(data) {
   actions.innerHTML = '';
   output.innerHTML += `<p>
     <strong id="username_chat">${data.username}</strong>: <i id="chat_content">${data.message}</i>
-  </p>`
+  </p>`;
+  scrollToBottom();
 });
 
 socket.on('chat:typing', function(data) {
   actions.innerHTML =  `<p><em>${data} is typing a message...</em></p>`
+  scrollToBottom();
 });
 
 socket.on('chat:username-entered', function(data){
     output.innerHTML += `<p>
     <i id="some1_has_logged_in">${data} has entered</i>
   </p>`
+  scrollToBottom();
 })
+
+socket.on('disconnected', function(){
+  output.innerHTML += `<p>
+  <i id="some1_has_logged_in">${username.value} has disconnected</i>
+</p>`
+  scrollToBottom();
+})
+
