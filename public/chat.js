@@ -9,13 +9,6 @@ let output = document.getElementById('output');
 let actions = document.getElementById('actions');
 let enter = document.getElementById("username");
 
-function scrollToBottom(){
-  var div = $("#chat-window");
-  div.animate({
-  scrollTop: div[0].scrollHeight},'fast');
-  return false;
-};
-
 message.addEventListener("keyup", function(event) {
   event.preventDefault();
   if (event.key === "Enter") {
